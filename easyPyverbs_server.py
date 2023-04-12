@@ -1,4 +1,4 @@
-from easyPyverbs.cmServer import cmServer
+from easyPyverbs.easyCM import cmServer
 from easyPyverbs.easyQP import easyQP,baseQP
 from easyPyverbs.easyContext import easyContext
 
