@@ -1,2 +1,2 @@
 # easyPyverbs
-easy version of pyverbs
+The easy version of pyverbs, really, very easy
