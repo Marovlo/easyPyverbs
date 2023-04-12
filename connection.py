@@ -1,7 +1,7 @@
 #!/usr/bin/python3.8
 from pyverbs.cmid import CMID
 
-# 无参同步消息
+# 无参同步消息msy
 sync_msg="msy"
 
 class commonBase:
