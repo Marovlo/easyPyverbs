@@ -1,3 +1,4 @@
+#!/usr/bin/python3.8
 from easyCM import cmClient
 from easyQP import easyQP,baseQP
 from easyContext import easyContext
