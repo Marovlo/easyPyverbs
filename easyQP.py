@@ -123,11 +123,11 @@ class easyQP():
         mr.write(data, mr_size)
         wr=SendWR(self.send_wr_id,opcode=IBV_WR_SEND,num_sge=1,sg=sgl)
 
-
+        conn.synchronize()
+        self.qp.post_send(wr)
         wc_num, wc_list = 0,[]
-        while wc_num==0:
-            self.qp.post_send(wr)
-            wc_num,wc_list=self.cq.poll()
+        wc_num,wc_list=self.cq.poll()
+        conn.synchronize()
 
         print(f'send to remote gid:{self.remote_gid},qpn:{self.remote_qpn} '
               f'successfully.\nbyte_len:{mr_size}')
@@ -138,10 +138,11 @@ class easyQP():
         sgl=[SGE(mr.buf,mr.length,mr.lkey)]
         wr=RecvWR(self.recv_wr_id,len(sgl),sgl)
 
+        self.qp.post_recv(wr)
+        conn.synchronize()
         wc_num,wc_list=0,[]
-        while wc_num==0:
-            self.qp.post_recv(wr)
-            wc_num, wc_list = self.cq.poll()
+        wc_num, wc_list = self.cq.poll()
+        conn.synchronize()
 
         print(f'receive from remote gid:{self.remote_gid},qpn:{self.remote_qpn} '
               f'successfully.\nbyte_len:{wc_list[0].byte_len}')
