@@ -17,11 +17,10 @@ print("client gid:",remote_info['gid'])
 print("client qpn:",remote_info['qpn'])
 qp=easyQP(context=ctx,baseqp=bqp,remote_gid=remote_info['gid'],remote_qpn=remote_info['qpn'])
 qp.to_rts()
-print(qp.qp.qp_state)
 
 # 准备数据
 tool=TENSORTOOLS()
-data=tool.tensor_to_byte(tensor=torch.randn((10,10,10)))
+data=tool.tensor_to_byte(tensor=torch.randn((10,10)))
 
 # 准备使用write进行单向写入
 # 使用write的一端需要提前获得对端的rkey和add，且不需要向对端同步本端的rkey和addr

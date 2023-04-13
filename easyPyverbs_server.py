@@ -14,7 +14,6 @@ print("remote gid:",remote_info['gid'])
 print("remote qpn:",remote_info['qpn'])
 qp=easyQP(context=ctx,baseqp=bqp,remote_gid=remote_info['gid'],remote_qpn=remote_info['qpn'])
 qp.to_rtr()
-print(qp.qp.qp_state)
 
 tool=TENSORTOOLS()
 
@@ -31,4 +30,4 @@ conn.handshake()
 print("read from remote:",tool.byte_to_tensor(mr.read(write_size,0)))
 
 # 准备接受对端的send
-print("recv from remote:",qp.recv(conn=conn))
+print("recv from remote:",tool.byte_to_tensor(qp.recv(conn=conn)))
