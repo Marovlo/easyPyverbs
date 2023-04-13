@@ -85,10 +85,10 @@ class easyQP():
     # 感觉这是最重要且最容易出错的一步，这一步没报错感觉就是表示连接上了，后面的read和write应该都能运行
     # modify qp status
     def to_rtr(self):
-        self.qp.to_rtr()
+        self.qp.to_rtr(self.qa)
 
     def to_rts(self):
-        self.qp.to_rts()
+        self.qp.to_rts(self.qa)
 
     # write函数是单向数据传输函数，需要配合cm进行控制信息的传输
     # easyQP中write相比于普通qp多出一个对方mr的可存储大小，在传输之前先请求对端注册足够大的内存，之后才能调用
