@@ -1,5 +1,7 @@
 #!/usr/bin/python3.8
-from pyverbs.cmid import CMID
+#后面要用的globals()函数返回的类型转换函数
+from builtins import str,int
+from pyverbs.addr import GID
 
 # 无参同步消息msy
 sync_msg="msy"
@@ -30,15 +32,20 @@ class commonBase:
 
     def handshake(self, **kwargs):
         '''
-        该函数必须双向调用，不然会阻塞，最好只用于qpn等同步消息的发送
+        该函数必须双向调用，不然会阻塞，最好只用于qpn等同步消息的发送，当handshake不传入参数时，为同步
         :param kwargs:
         :return:
         '''
         print("handshaking infos...", end=' ')
         # 给接受数据的内存稍微大一点的空间防止出问题，但实际上感觉得提前沟通大小，不然再大的空间都有可能出问题
         reserved_size = 1024
+        send_msg:bytes
+        # 如果不传参，则为单纯同步，即sycn
+        if len(kwargs) == 0:
+            send_msg='msy'.encode('utf-8')
         # 由于utf编码后中文为3字节而不是1字节，所以len得放在encode编码后计算
-        send_msg = self.prepare_send_msg(**kwargs).encode('utf-8')
+        else:
+            send_msg = self.prepare_send_msg(**kwargs).encode('utf-8')
         size = len(send_msg)
 
         # todo：handshake size limit
@@ -63,7 +70,10 @@ class commonBase:
         send_wc = self.cmid.get_send_comp()
         print("handshaked!")
 
-        return self.prase_recv_msg(recv_msg)
+        if recv_msg=='msy':
+            return
+        else:
+            return self.prase_recv_msg(recv_msg)
 
     def synchronize(self):
         '''

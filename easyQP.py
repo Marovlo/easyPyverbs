@@ -1,7 +1,5 @@
-#后面要用的globals()函数返回的类型转换函数
 from builtins import str,int
 from pyverbs.addr import GID
-
 from pyverbs.cmid import AddrInfo, CMID
 from pyverbs.wr import SGE, RecvWR, SendWR
 from pyverbs.qp import QP, QPCap, QPInitAttr, QPAttr
@@ -37,6 +35,12 @@ class baseQP():
         self.qp_init_attr = QPInitAttr(qp_type=IBV_QPT_RC, scq=self.cq, rcq=self.cq, cap=self.cap, sq_sig_all=True)
         self.qp = QP(self.pd, self.qp_init_attr)
         self.qpn=self.qp.qp_num
+
+    # 使用baseqp创建一个简易mr，由于mr需要pd信息才能进行创建，而pd信息最早出现在baseqp中，所由baseqp来管理mr的创建
+    def easyMR(self,mr_size:int=not None):
+        mr=MR(self.pd,mr_size,IBV_ACCESS_LOCAL_WRITE | IBV_ACCESS_REMOTE_WRITE | IBV_ACCESS_REMOTE_READ)
+        sgl = [SGE(mr.buf, mr.length, mr.lkey)]
+        return mr,sgl
 
 class easyQP():
     # 参数初始化
@@ -84,15 +88,12 @@ class easyQP():
 
     # write函数是单向数据传输函数，需要配合cm进行控制信息的传输
     # easyQP中write相比于普通qp多出一个对方mr的可存储大小，在传输之前先请求对端注册足够大的内存，之后才能调用
-    # 先使用cm获取对端所注册的内存的大小，作为一个必要参数填入，减少扩展性，提高可靠性
+    # 先使用cm获取对端所注册的内存的大小，作为一个必要参数填入，减少扩展性，提高可靠性(取消这个设定，如无必要，勿增需求)
     # write函数完成后，由于对端无法知道本端传输了多少以及是否传输完成，
     # 应视对端应用是否要取出该内存，选择是否使用sync通知对端应用传输已经完成
     def write(self,data:bytes=not None,remote_key:int=not None,
-              remote_addr=not None,remote_writable_size:int=not None):
+              remote_addr=not None):
         mr_size = len(data)
-        if remote_writable_size<mr_size:
-            print("remote writable size not enough!")
-            return
         mr=MR(self.pd,mr_size,IBV_ACCESS_LOCAL_WRITE | IBV_ACCESS_REMOTE_WRITE | IBV_ACCESS_REMOTE_READ)
         sgl=[SGE(mr.buf, mr.length, mr.lkey)]
         mr.write(data,mr_size)
@@ -105,12 +106,9 @@ class easyQP():
 
     # send函数是双向数据传输函数，在easyQP中需要配合cm进行控制信息的传输以及对端的recv函数进行数据的接收
     # 在easyQP中，send相比于普通qp多出一个对方mr可以存储的大小，在传输之前先请求对端注册足够大的内存，之后才能调用
-    # 先使用cm获取对端所注册的内存的大小，作为一个必要参数填入，减少扩展性，提高可靠性
-    def send(self,data:bytes=not None,remote_writable_size:int=not None):
+    # 先使用cm获取对端所注册的内存的大小，作为一个必要参数填入，减少扩展性，提高可靠性(取消这个设定，如无必要，勿增需求)
+    def send(self,data:bytes=not None):
         mr_size=len(data)
-        if remote_writable_size<mr_size:
-            print("remote writable size not enough!")
-            return
         mr = MR(self.pd, mr_size, IBV_ACCESS_LOCAL_WRITE | IBV_ACCESS_REMOTE_WRITE | IBV_ACCESS_REMOTE_READ)
         sgl = [SGE(mr.buf, mr.length, mr.lkey)]
         mr.write(data, mr_size)
@@ -121,11 +119,8 @@ class easyQP():
         print(f'send to remote gid:{self.remote_gid},qpn:{self.remote_qpn} '
               f'successfully.\nbyte_len:{mr_size}')
 
-    def recv(self,data_size:int=not None,writable_size:int=not None):
+    def recv(self,data_size:int=not None):
         mr_size=data_size
-        if writable_size<data_size:
-            print("local writable size not enough!")
-            return
         mr=MR(self.pd,mr_size,IBV_ACCESS_LOCAL_WRITE | IBV_ACCESS_REMOTE_WRITE | IBV_ACCESS_REMOTE_READ)
         sgl=[SGE(mr.buf,mr.length,mr.lkey)]
 
@@ -139,6 +134,7 @@ class easyQP():
         print(f'receive from remote gid:{self.remote_gid},qpn:{self.remote_qpn} '
               f'successfully.\nbyte_len:{mr_size}')
         return mr.read(wc_list[0].byte_len,0)
+
 
 
 
