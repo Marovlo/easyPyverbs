@@ -20,7 +20,7 @@ qp.to_rts()
 
 # 准备数据
 tool=TENSORTOOLS()
-data=tool.tensor_to_byte(tensor=torch.randn((10,10)))
+data=tool.tensor_to_byte(tensor=torch.randn((3,3)))
 
 # 准备使用write进行单向写入
 # 使用write的一端需要提前获得对端的rkey和add，且不需要向对端同步本端的rkey和addr
