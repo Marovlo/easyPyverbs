@@ -135,7 +135,7 @@ class easyQP():
     def recv(self,data_size:int=not None,conn:commonBase=not None):
         mr_size=data_size
         mr=MR(self.pd,mr_size,IBV_ACCESS_LOCAL_WRITE | IBV_ACCESS_REMOTE_WRITE | IBV_ACCESS_REMOTE_READ)
-        sgl=[SGE(mr.buf,mr.length,mr.lkey)]
+        sgl=[SGE(mr.buf,mr_size,mr.lkey)]
         wr=RecvWR(self.recv_wr_id,len(sgl),sgl)
 
 
@@ -146,7 +146,7 @@ class easyQP():
 
 
         print(f'receive from remote gid:{self.remote_gid},qpn:{self.remote_qpn} '
-              f'successfully.\nbyte_len:{wc_list[0].byte_len}')
+              f'successfully.\nbyte_len:{wc_list[0].byte_len},{data_size}')
         return mr.read(wc_list[0].byte_len,0)
 
 
