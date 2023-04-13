@@ -24,6 +24,8 @@ class baseQP():
     # 作为先导任务，配合cm完成qpn的交换，方便后续使用easyQP进行连接建立
     def __init__(self,context:easyContext=not None):
         self.context=context.context
+        self.index=context.index
+        self.port_num=context.port_num
         # 好像是pyverbs里才有的，用于管理python里的垃圾回收顺序
         # A reference for the creating Context is kept so that Python's GC will destroy the objects in the right order.
         self.pd = PD(self.context)
@@ -52,6 +54,8 @@ class easyQP():
                  remote_gid:GID=not None,remote_qpn:int=not None):
         # 对端信息
         self.context=context.context
+        self.index=baseqp.index
+        self.port_num = context.port_num
         self.qp=baseqp.qp
         self.pd=baseqp.pd
         self.cq=baseqp.cq
@@ -61,9 +65,9 @@ class easyQP():
         self.send_wr_id=2
         self.recv_wr_id=3
         # 可能是用于和gid配合进行route的组件
-        self.gr = GlobalRoute(dgid=self.remote_gid, sgid_index=1)
+        self.gr = GlobalRoute(dgid=self.remote_gid, sgid_index=self.index)
         # ah_attr是qa的基本参数，而qa是qp的attr，用于初始化qp和修改qp状态的
-        self.ah_attr = AHAttr(gr=self.gr, is_global=1, port_num=1)
+        self.ah_attr = AHAttr(gr=self.gr, is_global=1, port_num=self.port_num)
         # 初始化qa的属性，后续将绑定到qp上
         self.qa = QPAttr()
         self.qa.ah_attr = self.ah_attr
