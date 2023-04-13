@@ -138,8 +138,9 @@ class easyQP():
         sgl=[SGE(mr.buf,mr.length,mr.lkey)]
         wr=RecvWR(self.recv_wr_id,len(sgl),sgl)
 
-        conn.synchronize()
+
         self.qp.post_recv(wr)
+        conn.synchronize()
         conn.synchronize()
         wc_num, wc_list = self.cq.poll()
 
