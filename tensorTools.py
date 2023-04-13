@@ -17,4 +17,5 @@ class TENSORTOOLS():
         self.buf.flush()
         self.buf.write(data)
         self.buf.seek(0)
+        print(self.buf.getvalue())
         return torch.load(self.buf)

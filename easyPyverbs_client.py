@@ -33,7 +33,7 @@ qp.write(data=data,remote_key=remote_info['rkey'],remote_addr=remote_info['addr'
 # 告知对端写入完成
 conn.handshake()
 
-data=tool.tensor_to_byte(tensor=torch.randn((10,10,10)))
+data=tool.tensor_to_byte(tensor=torch.randn((3,3)))
 # 准备使用send进行双向同步写入
 # 使用send的一端不需要获得rkey和addr，只需要对端同步进行recv操作即可
 qp.send(data=data,conn=conn)
