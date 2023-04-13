@@ -125,9 +125,9 @@ class easyQP():
 
         conn.synchronize()
         self.qp.post_send(wr)
-        conn.synchronize()
-        wc_num,wc_list=self.cq.poll()
 
+        wc_num,wc_list=self.cq.poll()
+        conn.synchronize()
 
         print(f'send to remote gid:{self.remote_gid},qpn:{self.remote_qpn} '
               f'successfully.\nbyte_len:{wc_list[0].byte_len}')
