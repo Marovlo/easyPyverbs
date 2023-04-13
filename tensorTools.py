@@ -16,4 +16,5 @@ class TENSORTOOLS():
     def byte_to_tensor(self,data:bytes=not None):
         self.buf.flush()
         self.buf.write(data)
+        self.buf.seek(0)
         return torch.load(self.buf)

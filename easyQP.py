@@ -14,6 +14,7 @@ from pyverbs.cq import CQ
 from pyverbs.addr import AH, AHAttr, GlobalRoute
 from pyverbs.enums import *
 from pyverbs.cm_enums import *
+from easyCM import commonBase
 
 import torch
 import io
@@ -115,28 +116,28 @@ class easyQP():
     # send函数是双向数据传输函数，在easyQP中需要配合cm进行控制信息的传输以及对端的recv函数进行数据的接收
     # 在easyQP中，send相比于普通qp多出一个对方mr可以存储的大小，在传输之前先请求对端注册足够大的内存，之后才能调用
     # 先使用cm获取对端所注册的内存的大小，作为一个必要参数填入，减少扩展性，提高可靠性(取消这个设定，如无必要，勿增需求)
-    def send(self,data:bytes=not None):
+    def send(self,data:bytes=not None,conn:commonBase=not None):
         mr_size=len(data)
         mr = MR(self.pd, mr_size, IBV_ACCESS_LOCAL_WRITE | IBV_ACCESS_REMOTE_WRITE | IBV_ACCESS_REMOTE_READ)
         sgl = [SGE(mr.buf, mr.length, mr.lkey)]
         mr.write(data, mr_size)
-
         wr=SendWR(self.send_wr_id,opcode=IBV_WR_SEND,num_sge=1,sg=sgl)
         self.qp.post_send(wr)
-        wc_num,wc_list=self.cq.poll()
+
+        wc_num, wc_list = 0,[]
+        while wc_num==0
+            wc_num,wc_list=self.cq.poll()
         print(f'send to remote gid:{self.remote_gid},qpn:{self.remote_qpn} '
               f'successfully.\nbyte_len:{mr_size}')
 
-    def recv(self,data_size:int=not None):
+    def recv(self,data_size:int=not None,conn:commonBase=not None):
         mr_size=data_size
         mr=MR(self.pd,mr_size,IBV_ACCESS_LOCAL_WRITE | IBV_ACCESS_REMOTE_WRITE | IBV_ACCESS_REMOTE_READ)
         sgl=[SGE(mr.buf,mr.length,mr.lkey)]
-
         wr=RecvWR(self.recv_wr_id,len(sgl),sgl)
         self.qp.post_recv(wr)
-
-        wc_num,wc_list=self.cq.poll()
-        while len(wc_list)==0:
+        wc_num,wc_list=0,[]
+        while wc_num==0:
             wc_num, wc_list = self.cq.poll()
 
         print(f'receive from remote gid:{self.remote_gid},qpn:{self.remote_qpn} '

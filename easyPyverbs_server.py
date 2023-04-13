@@ -31,4 +31,4 @@ conn.handshake()
 print("read from remote:",tool.byte_to_tensor(mr.read(write_size,0)))
 
 # 准备接受对端的send
-print("recv from remote:",qp.recv())
+print("recv from remote:",qp.recv(conn=conn))
