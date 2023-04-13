@@ -146,7 +146,7 @@ class easyQP():
 
 
         print(f'receive from remote gid:{self.remote_gid},qpn:{self.remote_qpn} '
-              f'successfully.\nbyte_len:{wc_list[0].byte_len},{data_size}')
+              f'successfully.\nbyte_len:{wc_list[0].byte_len}')
         return mr.read(wc_list[0].byte_len,0)
 
 

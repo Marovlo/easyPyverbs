@@ -26,9 +26,9 @@ mr,_=bqp.easyMR(write_size)
 conn.handshake(addr=mr.buf,rkey=mr.rkey)
 # 对端告知本端写入完成
 conn.handshake()
+print(f"read {write_size} byte from remote:\n",tool.byte_to_tensor(mr.read(write_size,0)))
 
-print(f"read {write_size} byte from remote:",tool.byte_to_tensor(mr.read(write_size,0)))
 
 # 准备接受对端的send
 write_size=conn.handshake()['write_size']
-print(f"recv from remote:",tool.byte_to_tensor(qp.recv(write_size,conn)))
+print(tool.byte_to_tensor(qp.recv(write_size,conn)))
