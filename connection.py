@@ -16,7 +16,7 @@ class commonBase:
         self.cmid:CMID=None
 
     @staticmethod
-    def prepare_send_msg(self, **kwargs):
+    def prepare_send_msg(**kwargs):
         send_message = ''
         for key, value in kwargs.items():
             # 将需要握手的信息转换成str，并记录value的类型
@@ -25,7 +25,7 @@ class commonBase:
         return send_message
 
     @staticmethod
-    def prase_recv_msg(self, recv_message: str):
+    def prase_recv_msg(recv_message: str):
         info = dict()
         for amsg in recv_message.split(';'):
             item = amsg.split('-')
