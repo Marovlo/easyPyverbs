@@ -130,7 +130,7 @@ class easyQP():
         conn.synchronize()
 
         print(f'send to remote gid:{self.remote_gid},qpn:{self.remote_qpn} '
-              f'successfully.\nbyte_len:{mr_size}')
+              f'successfully.\nbyte_len:{wc_list[0].byte_len}')
 
     def recv(self,data_size:int=not None,conn:commonBase=not None):
         mr_size=data_size

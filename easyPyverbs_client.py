@@ -28,7 +28,7 @@ data=tool.tensor_to_byte(tensor=torch.randn((10,10,10)))
 # ps:应使用两次handshake，第一次本端告知对方将要写入多大内存，方便对端申请内存
 # 第二次，应收到中write_size为告知对端本端将要写多大内存，而回收到的remote_info中
 # 应该含有对端传来的rkey、addr，这需要在对端代码实现时按照要求编写
-conn.handshake(write_size=data)
+conn.handshake(write_size=len(data))
 remote_info=conn.handshake()
 qp.write(data=data,remote_key=remote_info['rkey'],remote_addr=remote_info['addr'])
 # 告知对端写入完成
