@@ -64,7 +64,7 @@ class easyQP():
         self.write_wr_id=1
         self.send_wr_id=2
         self.recv_wr_id=3
-        # 可能是用于和gid配合进行route的组件
+        # 可能是用于和gid配合进行route的组件,这里的index一定要和上面context中的index相同，不然就不能路由
         self.gr = GlobalRoute(dgid=self.remote_gid, sgid_index=self.index)
         # ah_attr是qa的基本参数，而qa是qp的attr，用于初始化qp和修改qp状态的
         self.ah_attr = AHAttr(gr=self.gr, is_global=1, port_num=self.port_num)

@@ -20,7 +20,7 @@ qp.to_rts()
 print(qp.qp.qp_state)
 
 # 准备数据
-tool=TENSORTOOLS
+tool=TENSORTOOLS()
 data=tool.tensor_to_byte(tensor=torch.randn((10,10,10)))
 
 # 准备使用write进行单向写入

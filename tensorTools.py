@@ -1,4 +1,5 @@
 import torch
+from torch import Tensor
 import io
 
 
@@ -7,7 +8,7 @@ class TENSORTOOLS():
     def __init__(self):
         self.buf=io.BytesIO()
 
-    def tensor_to_byte(self,tensor:torch.Tensor=not None):
+    def tensor_to_byte(self,tensor:Tensor=not None):
         self.buf.flush()
         torch.save(obj=tensor,f=self.buf)
         return self.buf.getvalue()
