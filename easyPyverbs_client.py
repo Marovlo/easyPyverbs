@@ -1,6 +1,6 @@
-from easyPyverbs.easyCM import cmClient
-from easyPyverbs.easyQP import easyQP,baseQP
-from easyPyverbs.easyContext import easyContext
+from easyCM import cmClient
+from easyQP import easyQP,baseQP
+from easyContext import easyContext
 from tensorTools import TENSORTOOLS
 import torch
 import io

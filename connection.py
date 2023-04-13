@@ -1,7 +1,12 @@
 #!/usr/bin/python3.8
+# 在其他所有import之前执行这一步，让找寻pyverb的顺序正确
+import sys
+sys.path.insert(0, '/home/bupt/rdma-core/build/python/')
+
 #后面要用的globals()函数返回的类型转换函数
 from builtins import str,int
 from pyverbs.addr import GID
+from pyverbs.cmid import AddrInfo, CMID
 
 # 无参同步消息msy
 sync_msg="msy"

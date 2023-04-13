@@ -1,3 +1,7 @@
+# 在其他所有import之前执行这一步，让找寻pyverb的顺序正确
+import sys
+sys.path.insert(0, '/home/bupt/rdma-core/build/python/')
+
 from builtins import str,int
 from pyverbs.addr import GID
 from pyverbs.cmid import AddrInfo, CMID
@@ -5,7 +9,7 @@ from pyverbs.wr import SGE, RecvWR, SendWR
 from pyverbs.qp import QP, QPCap, QPInitAttr, QPAttr
 from pyverbs.pd import PD
 from pyverbs.mr import MR
-from easyPyverbs.easyContext import easyContext
+from easyContext import easyContext
 from pyverbs.cq import CQ
 from pyverbs.addr import AH, AHAttr, GlobalRoute
 from pyverbs.enums import *
