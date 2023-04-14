@@ -13,5 +13,7 @@ tensor=tool.byte_to_tensor(conn.recv(data_size))
 print(tensor)
 
 # 验证对端write，使用同步write即sync_write_recv
-tensor=tool.byte_to_tensor(conn.sync_write_recv())
+data=conn.sync_write_recv()
+print(data)
+tensor=tool.byte_to_tensor(data)
 print(tensor)
