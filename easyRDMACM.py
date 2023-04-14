@@ -174,6 +174,7 @@ class easyRDMACM():
         remote_info = self.handshake()
         mr = self.reg_read(remote_info['data_size'])
         data = self.read(data_size=remote_info['data_size'], remote_addr=remote_info['remote_addr'],remote_key=remote_info['remote_key'])
+        print(data)
         self.handshake()
         return data
 
