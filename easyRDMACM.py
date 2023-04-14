@@ -60,14 +60,6 @@ class easyRDMACM():
     def disconnect(self):
         self.cmid.disconnect()
 
-    def reg_mr(self,size:int=not None):
-        '''
-        该函数用于注册全能内存mr
-        :param size:
-        :return:
-        '''
-        return MR(self.cmid.pd,size,IBV_ACCESS_LOCAL_WRITE | IBV_ACCESS_REMOTE_WRITE | IBV_ACCESS_REMOTE_READ)
-
     def reg_msgs(self,size:int=not None):
         '''
         该函数注册用于send和recv双向操作（控制信息）的内存mr
@@ -131,6 +123,19 @@ class easyRDMACM():
         mr=self.reg_read(data_size)
         self.cmid.post_read(mr,data_size,remote_addr,remote_key)
         return mr.read(data_size,0)
+    
+    def write(self,data:bytes=not None,
+              remote_addr=not None,remote_key=not None):
+        '''
+        写对端的内存，data是要写入的大小
+        :param data:
+        :param remote_addr:
+        :param remote_key:
+        :return: 无返回值
+        '''
+        data_size= len(data)
+        mr=self.reg_write(data_size)
+        self.cmid.post_write(mr,data_size,remote_addr,remote_key)
 
     def sync_write_recv(self):
         '''
@@ -139,7 +144,7 @@ class easyRDMACM():
         '''
         # 验证对端write，即本端建立mr供对端write
         data_size = self.handshake()['data_size']  # 获取对端要写入的大小
-        mr = self.reg_mr(size=data_size)  # 注册对应大小的内存
+        mr = self.reg_write(size=data_size)  # 注册对应大小的内存
         self.handshake(remote_addr=mr.buf, remote_key=mr.rkey)  # 告知对端内存的地址和key
         self.handshake()  # 等待对端告知写入完成
         return mr.read(data_size, 0)
@@ -157,18 +162,7 @@ class easyRDMACM():
 
     #def sync_read_recv
 
-    def write(self,data:bytes=not None,
-              remote_addr=not None,remote_key=not None):
-        '''
-        写对端的内存，data是要写入的大小
-        :param data:
-        :param remote_addr:
-        :param remote_key:
-        :return: 无返回值
-        '''
-        data_size= len(data)
-        mr=self.reg_write(data_size)
-        self.cmid.post_write(mr,data_size,remote_addr,remote_key)
+
 
     def post_recv(self,mr:MR=not None):
         '''
