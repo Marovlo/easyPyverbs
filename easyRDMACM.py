@@ -122,7 +122,7 @@ class easyRDMACM():
         :return: 返回值为读到的byte
         '''
         mr=self.reg_read(data_size)
-        self.cmid.post_read(mr,data_size,remote_addr,remote_key)
+        self.cmid.post_read(mr,data_size,remote_addr,remote_key-1)
         return mr.read(data_size,0)
 
     def write(self,data:bytes=not None,
@@ -136,6 +136,7 @@ class easyRDMACM():
         '''
         data_size= len(data)
         mr=self.reg_write(data_size)
+        print(remote_addr,remote_key)
         self.cmid.post_write(mr,data_size,remote_addr,remote_key)
 
     def sync_write_recv(self):
@@ -174,7 +175,6 @@ class easyRDMACM():
         remote_info = self.handshake()
         mr = self.reg_read(remote_info['data_size'])
         data = self.read(data_size=remote_info['data_size'], remote_addr=remote_info['remote_addr'],remote_key=remote_info['remote_key'])
-        print(data)
         self.handshake()
         return data
 
