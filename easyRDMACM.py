@@ -10,16 +10,11 @@ from pyverbs.cm_enums import *
 from pyverbs.mr import MR
 import enum
 
-class easyRDMACM_status(enum):
-    inited=0
-    connected=1
-    disconnected=2
 
 class easyRDMACM():
     def __init__(self):
         self.qpcap=QPCap()
         self.qp_init_attr=QPInitAttr(cap=self.qpcap)
-        self.status=easyRDMACM_status.inited
 
     def listen(self,src_ip: str = not None,src_port:int=not None):
         '''
@@ -37,7 +32,6 @@ class easyRDMACM():
         mycmid.accept()
         cmid.close()  # 只需要一个cmid就够了
         self.cmid = mycmid
-        self.status=easyRDMACM_status.connected
 
     def connect(self,dst_ip: str, dst_port: int = 12345, src_ip: str = '0.0.0.0'):
         '''
@@ -54,7 +48,6 @@ class easyRDMACM():
 
     def disconnect(self):
         self.cmid.disconnect()
-        self.status=easyRDMACM_status.disconnected
 
     def reg_msgs(self,size:int=not None):
         '''
