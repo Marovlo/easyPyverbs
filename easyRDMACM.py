@@ -163,7 +163,19 @@ class easyRDMACM():
         self.cmid.post_write(mr, data_size, remote_info['remote_addr'], remote_info['remote_key'])
         self.handshake() # 告知对端写入完成
 
-    #def sync_read_recv
+    def sync_read_recv(self,data:bytes=not None):
+        data_size= len(data)
+        mr=self.reg_read(data_size)
+        mr.write(data,data_size)
+        self.handshake(data_size=data_size,remote_addr=mr.buf,remote_key=mr.rkey)
+        self.handshake()
+
+    def sync_read_send(self):
+        remote_info = self.handshake()
+        mr = self.reg_read(remote_info['data_size'])
+        data = self.read(data_size=remote_info['data_size'], remote_addr=remote_info['remote_addr'],remote_key=remote_info['remote_key'])
+        self.handshake()
+        return data
 
 
 

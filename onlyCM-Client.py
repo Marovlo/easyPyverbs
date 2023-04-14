@@ -20,7 +20,6 @@ conn.send(data)
 # conn.handshake() # 告知对端写入完成、
 
 # 验证对端read
-data=tool.rand_tensor_byte(())
-data_size=len(data)
-mr=conn.reg_read(data_size)
-mr.write(data,data_size)
+data=tool.rand_tensor_byte((3,3))
+conn.sync_read_send(data)
+

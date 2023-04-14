@@ -19,6 +19,5 @@ print(tensor)
 # print(mr.read(data_size, 0))
 
 # 验证read对端，即本端read对端已建立的内存
-remote_info=conn.handshake()
-mr=conn.reg_read(remote_info['data_size'])
-tensor=conn.read(remote_addr=remote_info['remote_addr'],remote_key=remote_info['remote_key'])
+data=conn.sync_read_send()
+print(tool.byte_to_tensor(data))
