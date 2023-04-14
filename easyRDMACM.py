@@ -148,7 +148,6 @@ class easyRDMACM():
         mr = self.reg_write(size=data_size)  # 注册对应大小的内存
         self.handshake(remote_addr=mr.buf, remote_key=mr.rkey)  # 告知对端内存的地址和key
         self.handshake()  # 等待对端告知写入完成
-        self.handshake()
         return mr.read(data_size, 0)
 
     def sync_write_send(self,data:bytes=not None):
@@ -163,7 +162,6 @@ class easyRDMACM():
         mr = self.reg_write(data_size)
         self.cmid.post_write(mr, data_size, remote_info['remote_addr'], remote_info['remote_key'])
         self.handshake() # 告知对端写入完成
-        self.handshake()
 
     #def sync_read_recv
 
