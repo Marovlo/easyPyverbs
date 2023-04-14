@@ -122,7 +122,7 @@ class easyRDMACM():
         :return: 返回值为读到的byte
         '''
         mr=self.reg_read(data_size)
-        self.cmid.post_read(mr,data_size,remote_addr,remote_key)
+        self.cmid.post_read(mr,data_size,remote_addr,remote_key-1)
         return mr.read(data_size,0)
 
     def write(self,data:bytes=not None,
