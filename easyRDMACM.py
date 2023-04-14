@@ -95,7 +95,8 @@ class easyRDMACM():
         data_size=len(data)
         mr=self.cmid.reg_msgs(data_size)
         mr.write(data,data_size)
-        self.cmid.post_send(mr,data_size)
+        self.cmid.post_send(mr,0,data_size)
+        wc=self.cmid.get_send_comp()
 
     def read(self,data_size:int=not None,
                   remote_addr=not None,remote_key=not None):
@@ -141,7 +142,7 @@ class easyRDMACM():
         :param mr:
         :return: 无返回值，请用get_send_comp查询发送是否成功
         '''
-        self.cmid.post_send(mr,data_size)
+        self.cmid.post_send(mr,0,data_size)
 
     def post_read(self,mr:MR=not None,
                   remote_addr=not None,remote_key=not None):
