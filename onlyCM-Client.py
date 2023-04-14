@@ -14,10 +14,7 @@ conn.send(data)
 # 验证write，使用同步write即sync_write_send
 data=tool.rand_tensor_byte((3,3))
 data_size=len(data)
-conn.handshake(data_size=data_size) # 告知对端即将写入的大小
-remote_info=conn.handshake() # 等待对端告知内存的地址和key
-conn.write(data, remote_info['remote_addr'], remote_info['remote_key'])
-conn.handshake() # 告知对端写入完成、
+conn.sync_write_send(data)
 
 # 验证对端read
 data=tool.rand_tensor_byte((3,3))

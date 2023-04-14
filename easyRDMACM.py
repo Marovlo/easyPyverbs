@@ -136,7 +136,7 @@ class easyRDMACM():
         '''
         data_size= len(data)
         mr=self.reg_write(data_size)
-        print(remote_addr,remote_key)
+        mr.write(data)
         self.cmid.post_write(mr,data_size,remote_addr,remote_key)
 
     def sync_write_recv(self):
@@ -160,8 +160,7 @@ class easyRDMACM():
         data_size=len(data)
         self.handshake(data_size=data_size) # 告知对端即将写入的大小
         remote_info=self.handshake() # 等待对端告知内存的地址和key
-        mr = self.reg_write(data_size)
-        self.cmid.post_write(mr, data_size, remote_info['remote_addr'], remote_info['remote_key'])
+        self.write(data, remote_info['remote_addr'], remote_info['remote_key'])
         self.handshake() # 告知对端写入完成
 
     def sync_read_recv(self,data:bytes=not None):
