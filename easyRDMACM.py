@@ -24,7 +24,7 @@ import enum
 
 class easyRDMACM():
     def __init__(self):
-        self.qpcap=QPCap()
+        self.qpcap=QPCap(max_send_wr=10,max_send_sge=10,max_recv_wr=10,max_recv_sge=10)
         self.qp_init_attr=QPInitAttr(cap=self.qpcap)
 
     def listen(self,src_ip: str = not None,src_port:int=not None):
