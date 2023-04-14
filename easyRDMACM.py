@@ -6,10 +6,19 @@ from builtins import str,int
 from pyverbs.addr import GID
 from pyverbs.cmid import AddrInfo, CMID
 
+from builtins import str,int
+from pyverbs.addr import GID
 from pyverbs.cmid import AddrInfo, CMID
-from pyverbs.qp import QPCap, QPInitAttr
-from pyverbs.cm_enums import *
+from pyverbs.wr import SGE, RecvWR, SendWR
+from pyverbs.qp import QP, QPCap, QPInitAttr, QPAttr
+from pyverbs.pd import PD
 from pyverbs.mr import MR
+from easyContext import easyContext
+from pyverbs.cq import CQ
+from pyverbs.addr import AH, AHAttr, GlobalRoute
+from pyverbs.enums import *
+from pyverbs.cm_enums import *
+from easyCM import commonBase
 import enum
 
 
@@ -50,6 +59,14 @@ class easyRDMACM():
 
     def disconnect(self):
         self.cmid.disconnect()
+
+    def reg_mr(self,size:int=not None):
+        '''
+        该函数用于注册全能内存mr
+        :param size:
+        :return:
+        '''
+        return MR(self.cmid.pd,size,IBV_ACCESS_LOCAL_WRITE | IBV_ACCESS_REMOTE_WRITE | IBV_ACCESS_REMOTE_READ)
 
     def reg_msgs(self,size:int=not None):
         '''
@@ -114,6 +131,31 @@ class easyRDMACM():
         mr=self.reg_read(data_size)
         self.cmid.post_read(mr,data_size,remote_addr,remote_key)
         return mr.read(data_size,0)
+
+    def sync_write_recv(self):
+        '''
+        虽然write/reads是单边操作，但是实际过程中常常需要流程、消息、控制等同步操作，所以诞生同步版的单边操作
+        :return: 对端write后本端被写入的数据bytes
+        '''
+        # 验证对端write，即本端建立mr供对端write
+        data_size = self.handshake()['data_size']  # 获取对端要写入的大小
+        mr = self.reg_mr(size=data_size)  # 注册对应大小的内存
+        self.handshake(remote_addr=mr.buf, remote_key=mr.rkey)  # 告知对端内存的地址和key
+        self.handshake()  # 等待对端告知写入完成
+        return mr.read(data_size, 0)
+
+    def sync_write_send(self,data:bytes=not None):
+        '''
+        虽然write/reads是单边操作，但是实际过程中常常需要流程、消息、控制等同步操作，所以诞生同步版的单边操作
+        :param data:
+        :return:
+        '''
+        data_size=len(data)
+        self.handshake(data_size=data_size)
+        remote_info=self.handshake()
+        self.write(data,remote_addr=remote_info['addr'],remote_key=remote_info['key'])
+
+    #def sync_read_recv
 
     def write(self,data:bytes=not None,
               remote_addr=not None,remote_key=not None):
