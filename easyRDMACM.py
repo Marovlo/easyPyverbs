@@ -183,7 +183,7 @@ class easyRDMACM():
         '''
         return self.cmid.get_send_comp()
 
-    def prepare_send_msg(**kwargs):
+    def prepare_send_msg(self,**kwargs):
         send_message = ''
         for key, value in kwargs.items():
             # 将需要握手的信息转换成str，并记录value的类型
@@ -191,7 +191,7 @@ class easyRDMACM():
                             type(value).__name__ + '-' + str(value) + ';'
         return send_message
 
-    def prase_recv_msg(recv_message: str):
+    def prase_recv_msg(self,recv_message: str):
         info = dict()
         for amsg in recv_message.split(';'):
             item = amsg.split('-')
