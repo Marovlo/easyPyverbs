@@ -123,7 +123,7 @@ class easyRDMACM():
         mr=self.reg_read(data_size)
         self.cmid.post_read(mr,data_size,remote_addr,remote_key)
         return mr.read(data_size,0)
-    
+
     def write(self,data:bytes=not None,
               remote_addr=not None,remote_key=not None):
         '''
@@ -158,7 +158,7 @@ class easyRDMACM():
         data_size=len(data)
         self.handshake(data_size=data_size)
         remote_info=self.handshake()
-        self.write(data,remote_addr=remote_info['addr'],remote_key=remote_info['key'])
+        self.write(data,remote_addr=remote_info['remote_addr'],remote_key=remote_info['remote_key'])
 
     #def sync_read_recv
 
