@@ -16,7 +16,7 @@ data=tool.rand_tensor_byte((3,3))
 data_size=len(data)
 conn.handshake(data_size=data_size) # 告知对端即将写入的大小
 remote_info=conn.handshake() # 等待对端告知内存的地址和key
-conn.cmid.write(data, remote_info['remote_addr'], remote_info['remote_key'])
+conn.write(data, remote_info['remote_addr'], remote_info['remote_key'])
 conn.handshake() # 告知对端写入完成、
 
 # 验证对端read
