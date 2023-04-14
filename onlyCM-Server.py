@@ -20,4 +20,4 @@ print(mr.read(data_size, 0))
 
 # 验证read对端，即本端read对端已建立的内存
 data=conn.sync_read_send()
-print(tool.byte_to_tensor(data))
+print(data)
