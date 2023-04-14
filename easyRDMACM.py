@@ -168,10 +168,13 @@ class easyRDMACM():
         mr=self.reg_read(data_size)
         mr.write(data,data_size)
         self.handshake(data_size=data_size,remote_addr=mr.buf,remote_key=mr.rkey)
+        self.handshake()
 
     def sync_read_send(self):
         remote_info = self.handshake()
+        print(remote_info)
         data = self.read(data_size=remote_info['data_size'], remote_addr=remote_info['remote_addr'],remote_key=remote_info['remote_key'])
+        self.handshake()
         return data
 
 
