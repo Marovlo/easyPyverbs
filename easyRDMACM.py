@@ -156,9 +156,10 @@ class easyRDMACM():
         :return:
         '''
         data_size=len(data)
-        self.handshake(data_size=data_size)
-        remote_info=self.handshake()
+        self.handshake(data_size=data_size) # 告知对端即将写入的大小
+        remote_info=self.handshake() # 等待对端告知内存的地址和key
         self.write(data,remote_addr=remote_info['remote_addr'],remote_key=remote_info['remote_key'])
+        self.handshake() # 告知对端写入完成
 
     #def sync_read_recv
 
