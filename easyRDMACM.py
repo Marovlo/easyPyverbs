@@ -167,12 +167,20 @@ class easyRDMACM():
         data_size= len(data)
         mr=self.reg_read(data_size)
         mr.write(data,data_size)
-        self.handshake(data_size=data_size,remote_addr=mr.buf,remote_key=mr.rkey)
+        self.handshake(data_size=data_size)
+        self.handshake(remote_addr=mr.buf)
+        self.handshake(remote_key=mr.rkey)
         self.handshake()
 
     def sync_read_send(self):
-        remote_info = self.handshake()
-        data = self.read(data_size=remote_info['data_size'], remote_addr=remote_info['remote_addr'],remote_key=remote_info['remote_key'])
+        print(1)
+        data_size=self.handshake()['data_size']
+        print(2)
+        remote_addr=self.handshake()['remote_addr']
+        print(3)
+        remote_key=self.handshake()['remote_key']
+        print(4)
+        data = self.read(data_size, remote_addr,remote_key)
 
         self.handshake()
         return data
@@ -221,7 +229,7 @@ class easyRDMACM():
         :param remote_key:
         :return:
         '''
-        self.post_write(mr,mr.length,remote_addr,remote_key)
+        self.cmid.post_write(mr,mr.length,remote_addr,remote_key)
 
     def get_recv_comp(self):
         '''
@@ -263,8 +271,8 @@ class easyRDMACM():
         '''
         print("handshaking infos...", end=' ')
         # 给接受数据的内存稍微大一点的空间防止出问题，但实际上感觉得提前沟通大小，不然再大的空间都有可能出问题
-        print(**kwargs)
-        reserved_size = 100
+        #print(**kwargs)
+        reserved_size = 1024
         send_msg:bytes
         # 如果不传参，则为单纯同步，即sycn
         if len(kwargs) == 0:
@@ -273,7 +281,6 @@ class easyRDMACM():
         else:
             send_msg = self.prepare_send_msg(**kwargs).encode('utf-8')
         size = len(send_msg)
-        print(size)
         # todo：handshake size limit
 
         # 准备接受数据，有点不清楚这个post_recv函数是阻塞还是不阻塞
