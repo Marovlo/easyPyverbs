@@ -24,6 +24,7 @@ import enum
 
 class easyRDMACM():
     def __init__(self):
+        # 队列都开大一点，会存在同时有好几个请求的情况，即便并没有多线程
         self.qpcap=QPCap(max_send_wr=10,max_send_sge=10,max_recv_wr=10,max_recv_sge=10)
         self.qp_init_attr=QPInitAttr(cap=self.qpcap)
 
@@ -144,9 +145,10 @@ class easyRDMACM():
         '''
         # 验证对端write，即本端建立mr供对端write
         data_size = self.handshake()['data_size']  # 获取对端要写入的大小
-        mr = self.reg_read(size=data_size)  # 注册对应大小的内存
+        mr = self.reg_write(size=data_size)  # 注册对应大小的内存
         self.handshake(remote_addr=mr.buf, remote_key=mr.rkey)  # 告知对端内存的地址和key
         self.handshake()  # 等待对端告知写入完成
+        self.handshake()
         return mr.read(data_size, 0)
 
     def sync_write_send(self,data:bytes=not None):
@@ -161,6 +163,7 @@ class easyRDMACM():
         mr = self.reg_write(data_size)
         self.cmid.post_write(mr, data_size, remote_info['remote_addr'], remote_info['remote_key'])
         self.handshake() # 告知对端写入完成
+        self.handshake()
 
     #def sync_read_recv
 
