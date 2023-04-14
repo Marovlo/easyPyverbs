@@ -40,6 +40,7 @@ class cmServer(commonBase):
         cai = AddrInfo(src=src_ip, src_service=str(src_port),
                        port_space=RDMA_PS_TCP, flags=RAI_PASSIVE)
         cmid = CMID(creator=cai, qp_init_attr=qp_init_attr)
+
         # cmid=CMID(creator=cai)
         cmid.listen()  # cmid有点类似qt中的qsocketserver，listen会阻塞进程
         # 这个函数类似qt中qsocketserver的nextPendingConnection，只不过返回的类型也是一个cmid

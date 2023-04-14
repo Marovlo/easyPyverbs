@@ -5,6 +5,7 @@ from easyQP import easyQP,baseQP
 from easyContext import easyContext
 from tensorTools import TENSORTOOLS
 conn=cmServer(src_ip='0.0.0.0',src_port=12345)
+print(conn.cmid.dev_name)
 ctx=easyContext(dev_name='mlx5_1',port_num=1,index=3)
 bqp=baseQP(ctx)
 remote_info=conn.handshake(gid=ctx.local_gid,qpn=bqp.qpn)

@@ -69,7 +69,7 @@ class commonBase:
 
         # 接受队列完成，表示接收到数据，且接收到的数据长度存储在完成队列wc中
         recv_wc = self.cmid.get_recv_comp()
-        recv_msg = recv_mr.read(recv_wc.byte_len, 0).decode('utf-8')
+        recv_msg = recv_mr.read,(recv_wc.byte_len, 0).decode('utf-8')
 
         # 发送队列完成，表示数据成功发送
         send_wc = self.cmid.get_send_comp()

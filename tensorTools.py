@@ -16,3 +16,6 @@ class TENSORTOOLS():
         buf.seek(0)
         #print(buf.getvalue())
         return torch.load(buf)
+
+    def rand_tensor_byte(self,shape:tuple=not None):
+        return self.tensor_to_byte(torch.randn(shape))
