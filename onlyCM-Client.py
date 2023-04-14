@@ -13,7 +13,6 @@ conn.send(data)
 
 # 验证write，使用同步write即sync_write_send
 data=tool.rand_tensor_byte((3,3))
-data_size=len(data)
 conn.sync_write_send(data)
 
 # 验证对端read

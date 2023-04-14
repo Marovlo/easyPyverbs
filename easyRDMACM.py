@@ -136,7 +136,7 @@ class easyRDMACM():
         '''
         data_size= len(data)
         mr=self.reg_write(data_size)
-        mr.write(data)
+        mr.write(data,data_size)
         self.cmid.post_write(mr,data_size,remote_addr,remote_key)
 
     def sync_write_recv(self):
