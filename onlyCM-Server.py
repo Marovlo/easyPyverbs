@@ -1,7 +1,7 @@
 #!/usr/bin/python3.8
 from easyRDMACM import easyRDMACM
 from tensorTools import TENSORTOOLS
-conn=easyRDMACM(dev_name='mlx5_1')
+conn=easyRDMACM()
 conn.listen(src_ip='192.168.1.10',src_port=12345)
 tool=TENSORTOOLS()
 
