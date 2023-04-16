@@ -25,7 +25,6 @@ import enum
 class easyRDMACM():
     def __init__(self,dev_name:str=not None):
         self.context=easyContext(dev_name=dev_name)
-        self.pd=PD(creator=self.context.context)
         # 队列都开大一点，会存在同时有好几个请求的情况，即便并没有多线程
         self.qpcap = QPCap(max_send_wr=16, max_recv_wr=16, max_send_sge=1, max_recv_sge=1, max_inline_data=0)
 
@@ -45,7 +44,7 @@ class easyRDMACM():
         self.qp_init_attr = QPInitAttr(cap=self.qpcap, scq=self.cq, rcq=self.cq, sq_sig_all=True, qp_type=IBV_QPT_RC)
         self.cai=AddrInfo(src=src_ip, src_service=str(src_port),
                        port_space=RDMA_PS_TCP, flags=RAI_PASSIVE)
-        cmid=CMID(creator=self.cai, qp_init_attr=self.qp_init_attr,pd=self.pd)
+        cmid=CMID(creator=self.cai, qp_init_attr=self.qp_init_attr)
         cmid.listen()  # cmid有点类似qt中的qsocketserver，listen会阻塞进程
         # 这个函数类似qt中qsocketserver的nextPendingConnection，只不过返回的类型也是一个cmid
         mycmid = cmid.get_request()
