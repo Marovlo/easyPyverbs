@@ -215,7 +215,7 @@ class easyRDMACM():
         '''
         self.cmid.post_send(mr,0,data_size)
 
-    def post_read(self,mr:MR=not None,
+    def post_read(self,mr:MR=not None,data_size:int=not None,
                   remote_addr=not None,remote_key=not None):
         '''
         post一个读对端内存的请求，mr是用于存储read到的数据的内存，
@@ -229,9 +229,9 @@ class easyRDMACM():
         :param remote_key:
         :return: 无返回值，请直接读取mr内存查看
         '''
-        self.cmid.post_read(mr,mr.length,remote_addr,remote_key)
+        self.cmid.post_read(mr,data_size,remote_addr,remote_key)
 
-    def post_write(self,mr:MR=not None,
+    def post_write(self,mr:MR=not None,data_size:int=not None,
                   remote_addr=not None,remote_key=not None):
         '''
         post一个写对端内存的请求，mr是用于存储要write到对端的数据的内存，
@@ -241,7 +241,7 @@ class easyRDMACM():
         :param remote_key:
         :return:
         '''
-        self.cmid.post_write(mr,mr.length,remote_addr,remote_key)
+        self.cmid.post_write(mr,data_size,remote_addr,remote_key)
 
     def get_recv_comp(self):
         '''
@@ -275,15 +275,6 @@ class easyRDMACM():
                 info[key] = globals()[value_type](value)
         return info
 
-    def handshake(self,infos:list=[]):
-        send_msg:bytes
-        if len(infos)==0:
-            send_msg='msy'.encode('utf-8')
-        else:
-            send_msg=self.prepare_send_msg(infos).encode('utf-8')
-        recv_size=128
-        recv_mr=self.cmid.reg_msgs(recv_size)
-        self.cmid.post_recv(recv_mr,recv_size)
 
     def send_infos(self,**kwargs):
         msg=self.prepare_send_msg(**kwargs).encode('utf-8')
@@ -307,6 +298,7 @@ class easyRDMACM():
         for info in infos:
             msg+=type(info).__name__ +'-'+str(info)+';'
         return msg.encode('utf-8')
+
     def prase_recv_msg_old(self,msg:str):
         infos=[]
         for info in msg.split(';'):
