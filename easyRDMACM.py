@@ -50,6 +50,8 @@ class easyRDMACM():
         mycmid.accept()
         cmid.close()  # 只需要一个cmid就够了
         self.cmid = mycmid
+        self.mr_send_infos=self.cmid.reg_msgs(128)
+        self.mr_recv_infos=self.cmid.reg_msgs(128)
 
     def connect(self,dst_ip: str, dst_port: int = 12345, src_ip: str = '0.0.0.0'):
         '''
@@ -65,6 +67,8 @@ class easyRDMACM():
                        dst_service=str(dst_port), port_space=RDMA_PS_TCP)
         self.cmid = CMID(creator=self.cai, qp_init_attr=self.qp_init_attr)
         self.cmid.connect()
+        self.mr_send_infos = self.cmid.reg_msgs(128)
+        self.mr_recv_infos = self.cmid.reg_msgs(128)
 
     def disconnect(self):
         self.cmid.disconnect()
@@ -287,17 +291,16 @@ class easyRDMACM():
     def send_infos(self,**kwargs):
         msg=self.prepare_send_msg(**kwargs).encode('utf-8')
         msg_size= len(msg)
-        mr=self.cmid.reg_msgs(msg_size)
-        mr.write(msg,msg_size)
+        mr=self.mr_send_infos
+        mr.write(msg,msg_size,0)
         self.cmid.post_send(mr,msg_size)
         wc=self.cmid.get_send_comp()
-        print(wc)
+        #print(wc)
 
     def recv_infos(self):
-        mr=self.cmid.reg_msgs(128)
+        mr=self.mr_recv_infos
         self.cmid.post_recv(mr)
         wc=self.cmid.get_recv_comp()
-        print(wc)
         recv_msg=mr.read(wc.byte_len,0).decode('utf-8')
         recv_msg=self.prase_recv_msg(recv_msg)
         return recv_msg
