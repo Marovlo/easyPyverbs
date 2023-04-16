@@ -35,6 +35,12 @@ tool=TENSORTOOLS()
 
 data=conn.recv_infos()['data']
 conn.send_infos(size=100)
+conn.send_infos(data='abcd')
+data=conn.recv_infos()['size']
+data=conn.recv_infos()['data']
+conn.send_infos(size=100)
+conn.send_infos(data='abcd')
+data=conn.recv_infos()['size']
 
 
 
