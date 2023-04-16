@@ -26,13 +26,10 @@ class easyRDMACM():
     def __init__(self,dev_name:str=not None):
         self.context=easyContext(dev_name=dev_name)
         self.pd=PD(creator=self.context.context)
-        # cqe是cq的capacity，开大点
-        self.cq=CQ(context=self.context.context,cqe=100)
         # 队列都开大一点，会存在同时有好几个请求的情况，即便并没有多线程
         self.qpcap = QPCap(max_send_wr=16, max_recv_wr=16, max_send_sge=1, max_recv_sge=1, max_inline_data=0)
-        # :param sq_sig_all: If set, each send WR will generate a completion entry
-        # 有可能会解决handshake中的get_recv_comp卡住的问题
-        self.qp_init_attr = QPInitAttr(cap=self.qpcap,scq=self.cq,rcq=self.cq,sq_sig_all=True,qp_type=IBV_QPT_RC)
+
+
 
     def listen(self,src_ip: str = not None,src_port:int=not None):
         '''
@@ -41,9 +38,14 @@ class easyRDMACM():
         :param src_ip:
         :return: 无返回值
         '''
+        # cqe是cq的capacity，开大点
+        self.cq = CQ(context=self.context.context, cqe=100)
+        # :param sq_sig_all: If set, each send WR will generate a completion entry
+        # 有可能会解决handshake中的get_recv_comp卡住的问题
+        self.qp_init_attr = QPInitAttr(cap=self.qpcap, scq=self.cq, rcq=self.cq, sq_sig_all=True, qp_type=IBV_QPT_RC)
         self.cai=AddrInfo(src=src_ip, src_service=str(src_port),
                        port_space=RDMA_PS_TCP, flags=RAI_PASSIVE)
-        cmid=CMID(creator=self.cai, qp_init_attr=self.qp_init_attr)
+        cmid=CMID(creator=self.cai, qp_init_attr=self.qp_init_attr,pd=self.pd)
         cmid.listen()  # cmid有点类似qt中的qsocketserver，listen会阻塞进程
         # 这个函数类似qt中qsocketserver的nextPendingConnection，只不过返回的类型也是一个cmid
         mycmid = cmid.get_request()
@@ -59,6 +61,9 @@ class easyRDMACM():
         :param src_ip:
         :return: 无返回值
         '''
+        # :param sq_sig_all: If set, each send WR will generate a completion entry
+        # 有可能会解决handshake中的get_recv_comp卡住的问题
+        self.qp_init_attr = QPInitAttr(cap=self.qpcap, sq_sig_all=True, qp_type=IBV_QPT_RC)
         self.cai=AddrInfo(src=src_ip, dst=dst_ip,
                        dst_service=str(dst_port), port_space=RDMA_PS_TCP)
         self.cmid = CMID(creator=self.cai, qp_init_attr=self.qp_init_attr)
