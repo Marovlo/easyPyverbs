@@ -167,12 +167,15 @@ class easyRDMACM():
         data_size= len(data)
         mr=self.reg_read(data_size)
         mr.write(data,data_size)
+        self.handshake(test='sb')
         self.handshake(data_size=data_size)
         self.handshake(remote_addr=mr.buf)
         self.handshake(remote_key=mr.rkey)
         self.handshake()
 
     def sync_read_send(self):
+        print(0)
+        test=self.handshake()['test']
         print(1)
         data_size=self.handshake()['data_size']
         print(2)
@@ -294,13 +297,14 @@ class easyRDMACM():
         send_mr = self.cmid.reg_msgs(size)
         send_mr.write(send_msg, size)
         self.cmid.post_send(send_mr, 0, size)
+        send_wc = self.cmid.get_send_comp()
 
         # 接受队列完成，表示接收到数据，且接收到的数据长度存储在完成队列wc中
         recv_wc = self.cmid.get_recv_comp()
         recv_msg = recv_mr.read(recv_wc.byte_len, 0).decode('utf-8')
-
+        print(recv_msg,end=' ')
         # 发送队列完成，表示数据成功发送
-        send_wc = self.cmid.get_send_comp()
+
         print("handshaked!")
 
         if recv_msg=='msy':

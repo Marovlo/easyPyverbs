@@ -6,15 +6,31 @@ conn.listen(src_ip='192.168.1.10',src_port=12345)
 tool=TENSORTOOLS()
 
 
-# 验证recv & send
-data_size=conn.handshake()['data_size']
-tensor=tool.byte_to_tensor(conn.recv(data_size))
-print(tensor)
+# for i in range(100):
+#     # 验证recv & send
+#     print(i)
+#     if i%2==0:
+#         data_size=conn.handshake()['data_size']
+#         tensor=tool.byte_to_tensor(conn.recv(data_size))
+#         print(data_size/1000/1000)
+#     else:
+#         data = tool.rand_tensor_byte((10, 10, 10, 10, 10, 10, 10, i))
+#         conn.handshake(data_size=len(data))
+#         conn.send(data)
+#     #print(tensor)
 
-# # 验证对端write，即本端建立mr供对端write
-data=conn.sync_write_recv()
-print(tool.byte_to_tensor(data))
+# 验证write，完全使用原版cmid代码
+data_size=conn.handshake()
+print("data_size:",data_size)
+mr=conn.cmid.reg_write(size=data_size)
+conn.handshake(addr=mr.buf,rkey=mr.rkey)
+conn.handshake()
+data=mr.read(data_size,0)
+print(data)
 
-# 验证read对端，即本端read对端已建立的内存
-data=conn.sync_read_send()
-print(tool.byte_to_tensor(data))
+
+
+
+
+
+
