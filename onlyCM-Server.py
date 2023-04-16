@@ -19,15 +19,12 @@ tool=TENSORTOOLS()
 #         conn.send(data)
 #     #print(tensor)
 
+
 # 验证write，完全使用原版cmid代码
-data=tool.rand_tensor_byte((3,3))
-data_size= len(data)
-conn.handshake(data_size=data_size)
-remote_info=conn.handshake()
-mr=conn.cmid.reg_write(data_size)
-mr.write(data,data_size)
-conn.cmid.post_write(mr,data_size,remote_addr=remote_info['addr'],rkey=remote_info['rkey'])
-conn.handshake()
+a=dict()
+a['addr']=10000
+a['rkey']=123
+conn.send_infos(addr=100,rkey=1234)
 
 
 

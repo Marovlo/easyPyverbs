@@ -274,7 +274,48 @@ class easyRDMACM():
                 info[key] = globals()[value_type](value)
         return info
 
-    def handshake(self, **kwargs):
+    def prepare_send_msg_old(self,infos:list=not None):
+        msg=''
+        for info in infos:
+            msg+=type(info).__name__ +'-'+str(info)+';'
+        return msg.encode('utf-8')
+    def prase_recv_msg_old(self,msg:str):
+        infos=[]
+        for info in msg.split(';'):
+            type,str_info=info.split('-')
+            infos.append(globals()[type](str_info))
+        return infos
+
+    def handshake(self,infos:list=[]):
+        send_msg:bytes
+        if len(infos)==0:
+            send_msg='msy'.encode('utf-8')
+        else:
+            send_msg=self.prepare_send_msg(infos).encode('utf-8')
+        recv_size=128
+        recv_mr=self.cmid.reg_msgs(recv_size)
+        self.cmid.post_recv(recv_mr,recv_size)
+
+    def send_infos(self,**kwargs):
+        msg=self.prepare_send_msg(**kwargs).encode('utf-8')
+        msg_size= len(msg)
+        mr=self.cmid.reg_msgs(msg_size)
+        mr.write(msg,msg_size)
+        self.cmid.post_send(mr,msg_size)
+        wc=self.get_send_comp()
+
+    def recv_infos(self):
+        mr=self.cmid.reg_msgs(128)
+        self.cmid.post_recv(mr)
+        wc=self.cmid.get_recv_comp()
+        recv_msg=mr.read(wc.byte_len,0).decode('utf-8')
+        recv_msg=self.prase_recv_msg(recv_msg)
+        return recv_msg
+
+
+
+
+    def handshake_old(self, **kwargs):
         '''
         该函数必须双向调用，不然会阻塞，最好只用于qpn等同步消息的发送，当handshake不传入参数时，为同步
         :param kwargs:
