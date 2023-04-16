@@ -30,6 +30,8 @@ print('data_size:',data_size)
 remote_info=conn.recv_infos()
 print("remote_info:",remote_info)
 
+conn.send_infos(send_finished=1)
+
 # conn.send_infos(data='abcd')
 # data=conn.recv_infos()['size']
 # data=conn.recv_infos()['data']

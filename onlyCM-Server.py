@@ -27,6 +27,9 @@ mr=conn.cmid.reg_msgs(data_size)
 conn.send_infos(addr=mr.buf,rkey=mr.rkey)
 print("addr:",mr.buf,"rkey:",mr.rkey)
 
+send_finished=conn.recv_infos()['send_finished']
+print('send_finished:',send_finished)
+
 # data=conn.recv_infos()['data']
 # conn.send_infos(size=100)
 # conn.send_infos(data='abcd')
