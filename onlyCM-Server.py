@@ -21,11 +21,15 @@ tool=TENSORTOOLS()
 
 
 # 验证write，完全使用原版cmid代码
-a=dict()
-a['addr']=10000
-a['rkey']=123
-conn.send_infos(addr=100,rkey=1234)
-
+data_size=conn.recv_infos()['data_size'] # 接受对端要发送的data_size
+mr=conn.cmid.reg_write(data_size)
+conn.send_infos(addr=mr.buf,rkey=mr.rkey) # 向对端发送内存的地址和秘钥
+conn.cmid.post_recv(mr)
+send_finished=conn.recv_infos()['send_finished']
+if send_finished:
+    data=mr.read(data_size,0)
+    tensor=tool.byte_to_tensor(data)
+    print(tensor)
 
 
 

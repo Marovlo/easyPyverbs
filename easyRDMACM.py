@@ -2,7 +2,7 @@
 import sys
 sys.path.insert(0, '/home/bupt/rdma-core/build/python/')
 #后面要用的globals()函数返回的类型转换函数
-from builtins import str,int
+from builtins import str,int,bool
 from pyverbs.addr import GID
 from pyverbs.cmid import AddrInfo, CMID
 
@@ -274,18 +274,6 @@ class easyRDMACM():
                 info[key] = globals()[value_type](value)
         return info
 
-    def prepare_send_msg_old(self,infos:list=not None):
-        msg=''
-        for info in infos:
-            msg+=type(info).__name__ +'-'+str(info)+';'
-        return msg.encode('utf-8')
-    def prase_recv_msg_old(self,msg:str):
-        infos=[]
-        for info in msg.split(';'):
-            type,str_info=info.split('-')
-            infos.append(globals()[type](str_info))
-        return infos
-
     def handshake(self,infos:list=[]):
         send_msg:bytes
         if len(infos)==0:
@@ -312,8 +300,17 @@ class easyRDMACM():
         recv_msg=self.prase_recv_msg(recv_msg)
         return recv_msg
 
-
-
+    def prepare_send_msg_old(self,infos:list=not None):
+        msg=''
+        for info in infos:
+            msg+=type(info).__name__ +'-'+str(info)+';'
+        return msg.encode('utf-8')
+    def prase_recv_msg_old(self,msg:str):
+        infos=[]
+        for info in msg.split(';'):
+            type,str_info=info.split('-')
+            infos.append(globals()[type](str_info))
+        return infos
 
     def handshake_old(self, **kwargs):
         '''

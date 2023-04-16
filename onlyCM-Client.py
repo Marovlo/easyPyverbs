@@ -23,5 +23,13 @@ tool=TENSORTOOLS()
 
 
 # 验证write，完全使用原版cmid代码
+data=tool.rand_tensor_byte((3,3))
+data_size= len(data)
+conn.send_infos(data_size=data_size)
+mr=conn.cmid.reg_write(data_size)
+mr.write(data,data_size)
 remote_info=conn.recv_infos()
-print(remote_info)
+conn.cmid.post_write(mr,data_size,remote_info['addr'],remote_info['rkey'])
+wc=conn.cmid.get_send_comp()
+print(wc)
+conn.send_infos(send_finished=True)
