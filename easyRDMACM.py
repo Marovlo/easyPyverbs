@@ -23,11 +23,11 @@ import enum
 
 
 class easyRDMACM():
-    def __init__(self,dev_name:str=not None):
-        self.context=easyContext(dev_name=dev_name)
+    def __init__(self):
+        # self.context=easyContext(dev_name=dev_name,index=3) 用CM好像不能设置context，不然连接的时候会报错
         # 队列都开大一点，会存在同时有好几个请求的情况，即便并没有多线程
         self.qpcap = QPCap(max_send_wr=16, max_recv_wr=16, max_send_sge=1, max_recv_sge=1, max_inline_data=0)
-
+        self.qp_init_attr = QPInitAttr(cap=self.qpcap, sq_sig_all=True, qp_type=IBV_QPT_RC)
 
 
     def listen(self,src_ip: str = not None,src_port:int=not None):
@@ -38,10 +38,9 @@ class easyRDMACM():
         :return: 无返回值
         '''
         # cqe是cq的capacity，开大点
-        self.cq = CQ(context=self.context.context, cqe=100)
+        # self.cq = CQ(context=self.context.context, cqe=100)
         # :param sq_sig_all: If set, each send WR will generate a completion entry
         # 有可能会解决handshake中的get_recv_comp卡住的问题
-        self.qp_init_attr = QPInitAttr(cap=self.qpcap, scq=self.cq, rcq=self.cq, sq_sig_all=True, qp_type=IBV_QPT_RC)
         self.cai=AddrInfo(src=src_ip, src_service=str(src_port),
                        port_space=RDMA_PS_TCP, flags=RAI_PASSIVE)
         cmid=CMID(creator=self.cai, qp_init_attr=self.qp_init_attr)
@@ -62,7 +61,6 @@ class easyRDMACM():
         '''
         # :param sq_sig_all: If set, each send WR will generate a completion entry
         # 有可能会解决handshake中的get_recv_comp卡住的问题
-        self.qp_init_attr = QPInitAttr(cap=self.qpcap, sq_sig_all=True, qp_type=IBV_QPT_RC)
         self.cai=AddrInfo(src=src_ip, dst=dst_ip,
                        dst_service=str(dst_port), port_space=RDMA_PS_TCP)
         self.cmid = CMID(creator=self.cai, qp_init_attr=self.qp_init_attr)
