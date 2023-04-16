@@ -2,7 +2,7 @@
 
 from easyRDMACM import easyRDMACM
 from tensorTools import TENSORTOOLS
-conn=easyRDMACM(dev_name='mlx_5')
+conn=easyRDMACM(dev_name='mlx5_1')
 conn.connect(dst_ip='192.168.1.10',dst_port=12345)
 tool=TENSORTOOLS()
 
