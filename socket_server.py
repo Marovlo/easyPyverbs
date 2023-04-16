@@ -1,3 +1,4 @@
+#!/usr/bin/python3.8
 import time
 import socket
 from tensorTools import TENSORTOOLS
