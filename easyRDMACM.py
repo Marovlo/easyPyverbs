@@ -288,19 +288,19 @@ class easyRDMACM():
     def send_infos(self,**kwargs):
         msg=self.prepare_send_msg(**kwargs).encode('utf-8')
         msg_size= len(msg)
-        print(msg)
+        # print(msg)
         mr=self.cmid.reg_msgs(msg_size)
         mr.write(msg,msg_size)
         self.cmid.post_send(mr,msg_size)
         wc=self.cmid.get_send_comp()
-        #print(wc)
+        # print(wc)
 
     def recv_infos(self):
         mr=self.cmid.reg_msgs(128)
         self.cmid.post_recv(mr)
         wc=self.cmid.get_recv_comp()
         recv_msg=mr.read(wc.byte_len,0).decode('utf-8')
-        print(recv_msg)
+        # print(recv_msg)
         recv_msg=self.prase_recv_msg(recv_msg)
         return recv_msg
 

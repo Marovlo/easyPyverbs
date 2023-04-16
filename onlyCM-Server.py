@@ -21,26 +21,20 @@ tool=TENSORTOOLS()
 
 
 # 验证write，完全使用原版cmid代码
-# data_size=conn.recv_infos()['data_size'] # 接受对端要发送的data_size
-# # mr=conn.cmid.reg_write(data_size)
-# # conn.send_infos(addr=mr.buf,rkey=mr.rkey) # 向对端发送内存的地址和秘钥
-# # conn.cmid.post_recv(mr)
-# send_finished=conn.recv_infos()
-# send_finished=conn.recv_infos()
-# if send_finished:
-#     data=mr.read(data_size,0)
-#     #print(data)
-#     #tensor=tool.byte_to_tensor(data)
-#     #print(tensor)
+data_size=conn.recv_infos()['data_size'] # 接受对端要发送的data_size
+print('data_size:',data_size)
+mr=conn.cmid.reg_msgs(data_size)
+conn.send_infos(addr=mr.buf,rkey=mr.rkey)
+print("addr:",mr.buf,"rkey:",mr.rkey)
 
-data=conn.recv_infos()['data']
-conn.send_infos(size=100)
-conn.send_infos(data='abcd')
-data=conn.recv_infos()['size']
-data=conn.recv_infos()['data']
-conn.send_infos(size=100)
-conn.send_infos(data='abcd')
-data=conn.recv_infos()['size']
+# data=conn.recv_infos()['data']
+# conn.send_infos(size=100)
+# conn.send_infos(data='abcd')
+# data=conn.recv_infos()['size']
+# data=conn.recv_infos()['data']
+# conn.send_infos(size=100)
+# conn.send_infos(data='abcd')
+# data=conn.recv_infos()['size']
 
 
 
