@@ -12,6 +12,7 @@ mr=data_conn.cmid.reg_msgs(data_size)
 info_conn.send_infos(addr=mr.buf,rkey=mr.rkey)
 send_finished=info_conn.recv_infos()['send_finished']
 data=mr.read(data_size,0)
+print(data)
 print(tool.byte_to_tensor(data))
 
 
