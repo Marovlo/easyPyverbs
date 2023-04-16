@@ -25,6 +25,8 @@ tool=TENSORTOOLS()
 # 验证write，完全使用原版cmid代码
 data=tool.rand_tensor_byte((3,3))
 data_size= len(data)
+mr=conn.cmid.reg_write(data_size)
+mr.write(data=data,length=data_size)
 conn.send_infos(data_size=data_size)
 print('data_size:',data_size)
 remote_info=conn.recv_infos()
