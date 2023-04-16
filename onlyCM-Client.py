@@ -19,12 +19,13 @@ tool=TENSORTOOLS()
 # data=tool.rand_tensor_byte((3,3))
 # conn.sync_read_recv(data)
 
+
+
 # 验证write，完全使用原版cmid代码
-data=tool.rand_tensor_byte((3,3))
-data_size= len(data)
-conn.handshake(data_size=data_size)
-remote_info=conn.handshake()
-mr=conn.cmid.reg_write(data_size)
-mr.write(data,data_size)
-conn.cmid.post_write(mr,data_size,remote_addr=remote_info['addr'],rkey=remote_info['rkey'])
+data_size=conn.handshake()['data_size']
+print("data_size:",data_size)
+mr=conn.cmid.reg_write(size=data_size)
+conn.handshake(addr=mr.buf,rkey=mr.rkey)
 conn.handshake()
+data=mr.read(data_size,0)
+print(data)
