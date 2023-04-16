@@ -1,7 +1,7 @@
 #!/usr/bin/python3.8
 from easyRDMACM import easyRDMACM
 from tensorTools import TENSORTOOLS
-conn=easyRDMACM()
+conn=easyRDMACM(dev_name='mlx5_1')
 conn.listen(src_ip='192.168.1.10',src_port=12345)
 tool=TENSORTOOLS()
 
@@ -20,7 +20,7 @@ tool=TENSORTOOLS()
 #     #print(tensor)
 
 # 验证write，完全使用原版cmid代码
-data_size=conn.handshake()
+data_size=conn.handshake()['data_size']
 print("data_size:",data_size)
 mr=conn.cmid.reg_write(size=data_size)
 conn.handshake(addr=mr.buf,rkey=mr.rkey)
