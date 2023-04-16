@@ -31,6 +31,7 @@ conn.send_infos(data_size=data_size)
 print('data_size:',data_size)
 remote_info=conn.recv_infos()
 print("remote_info:",remote_info)
+conn.cmid.post_write(mr,data_size,remote_info['addr'],remote_info['rkey'])
 
 conn.send_infos(send_finished=1)
 
