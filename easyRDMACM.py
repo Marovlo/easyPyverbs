@@ -300,6 +300,7 @@ class easyRDMACM():
         self.cmid.post_recv(mr)
         wc=self.cmid.get_recv_comp()
         recv_msg=mr.read(wc.byte_len,0).decode('utf-8')
+        print(recv_msg)
         recv_msg=self.prase_recv_msg(recv_msg)
         return recv_msg
 
